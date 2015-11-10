@@ -1,0 +1,189 @@
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..1955793
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1 @@
++generated_mac_address.txt
+diff --git a/WICED/network/LwIP/WWD/wwd_buffer.c b/WICED/network/LwIP/WWD/wwd_buffer.c
+index 4e7f56d..7307646 100644
+--- a/WICED/network/LwIP/WWD/wwd_buffer.c
++++ b/WICED/network/LwIP/WWD/wwd_buffer.c
+@@ -11,11 +11,11 @@
+ #include "network/wwd_buffer_interface.h"
+ #include "platform/wwd_bus_interface.h"
+ #include "lwip/netbuf.h"
+-#include "FreeRTOS.h"
++#include "lwip/pbuf.h"
+ #include "lwip/memp.h"
+-#include "task.h"
+ #include <string.h> /* for NULL */
+ #include "wwd_assert.h"
++#include "network/wwd_network_constants.h"
+ 
+ void memp_free_notify( unsigned int type );
+ 
+@@ -29,8 +29,7 @@ wwd_result_t host_buffer_init( /*@null@*/ /*@unused@*/ void * native_arg )
+ 
+ wwd_result_t host_buffer_check_leaked( void )
+ {
+-    wiced_assert( "pbuf TX pool Buffer leakage", memp_in_use( MEMP_PBUF_POOL_TX ) == 0 );
+-    wiced_assert( "pbuf RX pool Buffer leakage", memp_in_use( MEMP_PBUF_POOL_RX ) == 0 );
++    wiced_assert( "pbuf pool Buffer leakage", memp_in_use( MEMP_PBUF_POOL ) == 0 );
+     wiced_assert( "pbuf ref/rom Buffer leakage", memp_in_use( MEMP_PBUF ) == 0 );
+     return WWD_SUCCESS;
+ }
+@@ -54,10 +53,10 @@ wwd_result_t host_buffer_get( /*@special@*/ /*@out@*/ wiced_buffer_t* buffer, ww
+ 
+     do
+     {
+-        *buffer = pbuf_alloc( PBUF_RAW, size, ( direction == WWD_NETWORK_RX ) ? PBUF_POOL_RX : PBUF_POOL_TX );
++        *buffer = pbuf_alloc( PBUF_RAW, size, PBUF_POOL);
+     } while ( ( *buffer == NULL ) &&
+               ( wait == WICED_TRUE ) &&
+-              ( vTaskDelay( (portTickType) 1 ), 1 == 1 ) );
++              ( posTaskSleep( 1 ), 1 == 1 ) );
+     if ( *buffer == NULL )
+     {
+ #if 0
+@@ -127,15 +126,3 @@ wwd_result_t host_buffer_set_size( /*@temp@*/ wiced_buffer_t buffer, unsigned sh
+          return WWD_SUCCESS;
+ }
+ 
+-
+-void memp_free_notify( unsigned int type )
+-{
+-    if ( type == MEMP_PBUF_POOL_TX )
+-    {
+-        host_platform_bus_buffer_freed( WWD_NETWORK_TX );
+-    }
+-    else if ( type == MEMP_PBUF_POOL_RX )
+-    {
+-        host_platform_bus_buffer_freed( WWD_NETWORK_RX );
+-    }
+-}
+diff --git a/WICED/network/LwIP/WWD/wwd_network.c b/WICED/network/LwIP/WWD/wwd_network.c
+index 67da1bb..adbf431 100644
+--- a/WICED/network/LwIP/WWD/wwd_network.c
++++ b/WICED/network/LwIP/WWD/wwd_network.c
+@@ -28,6 +28,7 @@
+ #include "wiced_constants.h"
+ #include <stdlib.h>
+ 
++#include "network/wwd_network_constants.h"
+ #ifdef ADD_LWIP_EAPOL_SUPPORT
+ #define ETHTYPE_EAPOL    0x888E
+ #endif
+@@ -168,7 +169,17 @@ static err_t low_level_output( struct netif *netif, /*@only@*/ struct pbuf *p )
+     {
+         /* Take a reference to this packet */
+         pbuf_ref( p );
++#if ETH_PAD_SIZE
+ 
++/*
++ * Wiced layer expects that pbuf points to beginning
++ * of ethernet frame. When using a padding word for
++ * alignment we must drop it (actually the padding word
++ * overlaps with the space used by wiced link headers
++ * but LwIP never actually touches it so this is not a problem.
++ */
++        pbuf_header(p, -ETH_PAD_SIZE); /* drop the padding word */
++#endif
+         LWIP_ASSERT( "No chained buffers", ( ( p->next == NULL ) && ( ( p->tot_len == p->len ) ) ) );
+         wwd_network_send_ethernet_data( p, (wwd_interface_t) (int) netif->state );
+ 
+@@ -204,6 +215,16 @@ void host_network_process_ethernet_data( /*@only@*/ wiced_buffer_t buffer, wwd_i
+         return;
+ 
+     /* points to packet payload, which starts with an Ethernet header */
++#if ETH_PAD_SIZE
++
++/*
++ * LwIP expects that incoming pbuf points to padding word of ethernet header.
++ * The padding word actually has data from Wiced link layer but as it
++ * is not modified by LwIP it is ok for them to overlap.
++ */
++    pbuf_header(buffer, ETH_PAD_SIZE); /* add the padding word */
++#endif
++
+     ethernet_header = (struct eth_hdr *) buffer->payload;
+ 
+     ethertype = htons( ethernet_header->type );
+diff --git a/platforms/EMW3162/platform.c b/platforms/EMW3162/platform.c
+index 6158e30..3697cb8 100644
+--- a/platforms/EMW3162/platform.c
++++ b/platforms/EMW3162/platform.c
+@@ -85,6 +85,7 @@ const platform_gpio_t platform_gpio_pins[] =
+   // 37 - 44 are GND or NC
+ };
+ 
++#ifndef MINIMAL_PLATFORM
+ /* ADC peripherals. Used WICED/platform/MCU/wiced_platform_common.c */
+ const platform_adc_t platform_adc_peripherals[] =
+ {
+@@ -264,6 +265,8 @@ static platform_uart_config_t stdio_config =
+ };
+ #endif
+ 
++#endif /* MINIMAL_PLAFORM */
++
+ /* Wi-Fi control pins. Used by WICED/platform/MCU/wwd_platform_common.c
+  * SDIO: WWD_PIN_BOOTSTRAP[1:0] = b'00
+  * gSPI: WWD_PIN_BOOTSTRAP[1:0] = b'01
+@@ -293,6 +296,7 @@ const platform_gpio_t wifi_sdio_pins[] =
+     [WWD_PIN_SDIO_D3     ] = { GPIOC, 11 },
+ };
+ 
++#ifndef MINIMAL_PLATFORM
+ /* Wi-Fi gSPI bus pins. Used by WICED/platform/STM32F2xx/WWD/wwd_SPI.c */
+ const platform_gpio_t wifi_spi_pins[] =
+ {
+@@ -303,6 +307,7 @@ const platform_gpio_t wifi_spi_pins[] =
+     [WWD_PIN_SPI_MISO] = { GPIOB, 14 },
+ };
+ 
++#endif /* MINIMAL_PLATFORM */
+ /******************************************************
+  *               Function Definitions
+  ******************************************************/
+@@ -314,8 +319,10 @@ void platform_init_peripheral_irq_priorities( void )
+     NVIC_SetPriority( SDIO_IRQn        ,  2 ); /* WLAN SDIO           */
+     NVIC_SetPriority( DMA2_Stream3_IRQn,  3 ); /* WLAN SDIO DMA       */
+     NVIC_SetPriority( DMA1_Stream3_IRQn,  3 ); /* WLAN SPI DMA        */
++#ifndef MINIMAL_PLATFORM
+     NVIC_SetPriority( USART1_IRQn      ,  6 ); /* WICED_UART_1        */
+     NVIC_SetPriority( USART2_IRQn      ,  6 ); /* WICED_UART_2        */
++#endif /* MINIMAL_PLATFORM */
+     NVIC_SetPriority( DMA2_Stream7_IRQn,  7 ); /* WICED_UART_1 TX DMA */
+     NVIC_SetPriority( DMA2_Stream2_IRQn,  7 ); /* WICED_UART_1 RX DMA */
+     NVIC_SetPriority( DMA1_Stream6_IRQn,  7 ); /* WICED_UART_2 TX DMA */
+@@ -338,6 +345,8 @@ void platform_init_external_devices( void )
+         new firmware.
+     */
+     
++#warning Get newer CMSIS which has DWT definitions
++#if 0
+     //patch added to resolve the microseconds delay hang issue.
+     do
+     {
+@@ -349,6 +358,7 @@ void platform_init_external_devices( void )
+         DWT->CTRL = (DWT->CTRL | DWT_CTRL_CYCCNTENA_Msk) ;
+     }
+     while(0);
++#endif
+ 
+     /* Initialise LEDs and turn off by default */
+     platform_gpio_init( &platform_gpio_pins[WICED_LED1], OUTPUT_PUSH_PULL );
+@@ -406,6 +416,7 @@ wiced_bool_t platform_check_factory_reset( void )
+     return WICED_FALSE;
+ }
+ 
++#ifndef MINIMAL_PLATFORM
+ /******************************************************
+  *           Interrupt Handler Definitions
+  ******************************************************/
+@@ -451,3 +462,4 @@ WWD_RTOS_MAP_ISR( usart1_rx_dma_irq, DMA2_Stream2_irq )
+ WWD_RTOS_MAP_ISR( usart2_irq       , USART2_irq       )
+ WWD_RTOS_MAP_ISR( usart2_tx_dma_irq, DMA1_Stream6_irq )
+ WWD_RTOS_MAP_ISR( usart2_rx_dma_irq, DMA1_Stream5_irq )
++#endif /* MINIMAL_PLATFORM */
