@@ -24,7 +24,7 @@ library. Apply patch to make it work with Pico]OS:
 
 cd WICED-SDK-3.3.1; patch -p1 < ../wiced.patch
 
-The patch modifies wwd_buffer.c so that it works with stock LwIP
+The patch modifies wwd_buffer.c & wwd_network.c so that they work with stock LwIP.
 EMW3162 platform.c is modified so that UART stuff is excluded, as
 Pico]OS has it's own console support.
 
