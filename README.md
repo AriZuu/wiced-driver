@@ -3,7 +3,7 @@ LwIP driver for Broadcom WICED WIFI
 
 This library contains a LwIP driver (for picoos-lwip library). It works with
 stock LwIP by using PBUF_LINK_ENCAPSULATION_HLEN to reserve space for Wiced SDK
-headers that exist before ethernet header. Standard two-byte padding in beginning
+headers that exist before ethernet header. Two-byte padding in beginning
 of ethernet frame is used, but the padding word overlaps with last two bytes
 of Wiced SDK headers. A little bit odd, but as LwIP never really touches the contents
 of the padding word this was an easy way to get correctly aligned packet (DMA processing
@@ -28,8 +28,8 @@ The patch modifies wwd_buffer.c & wwd_network.c so that they work with stock LwI
 EMW3162 platform.c is modified so that UART stuff is excluded, as
 Pico]OS has it's own console support.
 
-Library doesn't use SDK Makefiles (Pico]OS Makefile system is use instead).
-Also, neither LwIP nor RTOS inside SDK is not used (lwip comes from picoos-lwip
+Library doesn't use Wiced SDK Makefiles (Pico]OS Makefile system is used instead).
+Also, neither LwIP nor RTOS inside SDK is used (LwIP comes from picoos-lwip
 library and RTOS is, well, of course Pico]OS)
 
 Wifi chip firmware is loaded from /firmware/43362A2.bin, it's up to the
