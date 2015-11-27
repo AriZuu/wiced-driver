@@ -11,6 +11,7 @@ DIR_MODINC +=	$(SDK)/WICED/WWD/include \
 	 	$(SDK)/WICED/WWD/internal/chips/$(WICED_CHIP) \
 	 	$(SDK)/WICED/platform/include \
 		$(SDK)/WICED/network/LwIP/WWD \
+		$(SDK)/include \
 		$(MOD)/picoos/WWD $(MOD)/ports/$(PORT)
 
 LWIP_DRIVER_INC += $(DIR_MODINC)
