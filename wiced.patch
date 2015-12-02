@@ -110,7 +110,7 @@ index 67da1bb..adbf431 100644
  
      ethertype = htons( ethernet_header->type );
 diff --git a/platforms/EMW3162/platform.c b/platforms/EMW3162/platform.c
-index 6158e30..3697cb8 100644
+index 6158e30..a13aeae 100644
 --- a/platforms/EMW3162/platform.c
 +++ b/platforms/EMW3162/platform.c
 @@ -85,6 +85,7 @@ const platform_gpio_t platform_gpio_pins[] =
@@ -157,24 +157,7 @@ index 6158e30..3697cb8 100644
      NVIC_SetPriority( DMA2_Stream7_IRQn,  7 ); /* WICED_UART_1 TX DMA */
      NVIC_SetPriority( DMA2_Stream2_IRQn,  7 ); /* WICED_UART_1 RX DMA */
      NVIC_SetPriority( DMA1_Stream6_IRQn,  7 ); /* WICED_UART_2 TX DMA */
-@@ -338,6 +345,8 @@ void platform_init_external_devices( void )
-         new firmware.
-     */
-     
-+#warning Get newer CMSIS which has DWT definitions
-+#if 0
-     //patch added to resolve the microseconds delay hang issue.
-     do
-     {
-@@ -349,6 +358,7 @@ void platform_init_external_devices( void )
-         DWT->CTRL = (DWT->CTRL | DWT_CTRL_CYCCNTENA_Msk) ;
-     }
-     while(0);
-+#endif
- 
-     /* Initialise LEDs and turn off by default */
-     platform_gpio_init( &platform_gpio_pins[WICED_LED1], OUTPUT_PUSH_PULL );
-@@ -406,6 +416,7 @@ wiced_bool_t platform_check_factory_reset( void )
+@@ -406,6 +413,7 @@ wiced_bool_t platform_check_factory_reset( void )
      return WICED_FALSE;
  }
  
@@ -182,7 +165,7 @@ index 6158e30..3697cb8 100644
  /******************************************************
   *           Interrupt Handler Definitions
   ******************************************************/
-@@ -451,3 +462,4 @@ WWD_RTOS_MAP_ISR( usart1_rx_dma_irq, DMA2_Stream2_irq )
+@@ -451,3 +459,4 @@ WWD_RTOS_MAP_ISR( usart1_rx_dma_irq, DMA2_Stream2_irq )
  WWD_RTOS_MAP_ISR( usart2_irq       , USART2_irq       )
  WWD_RTOS_MAP_ISR( usart2_tx_dma_irq, DMA1_Stream6_irq )
  WWD_RTOS_MAP_ISR( usart2_rx_dma_irq, DMA1_Stream5_irq )
