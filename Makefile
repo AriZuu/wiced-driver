@@ -89,7 +89,7 @@ SRC_TXT +=	$(SDK)/WICED/platform/MCU/wwd_platform_separate_mcu.c \
 		$(SDK)/WICED/platform/MCU/$(WICED_MCU)/peripherals/platform_gpio.c \
 		$(SDK)/WICED/platform/MCU/$(WICED_MCU)/peripherals/platform_rtc.c \
 		$(SDK)/WICED/platform/MCU/$(WICED_MCU)/peripherals/platform_watchdog.c \
-		$(SDK)/WICED/platform/MCU/STM32F2xx/platform_init.c \
+		$(SDK)/WICED/platform/MCU/$(WICED_MCU)/platform_init.c \
 		$(SDK)/platforms/$(WICED_PLATFORM)/platform.c
 
 
@@ -109,11 +109,20 @@ DIR_USRINC +=	$(SDK)/libraries/utilities/TLV \
 		$(SDK)/libraries/utilities/ring_buffer \
 		$(SDK)/WICED/platform/GCC
 
+
 DIR_USRINC +=	$(SDK)/WICED/platform/MCU/$(WICED_MCU) \
 		$(SDK)/WICED/platform/MCU/ \
-		$(SDK)/WICED/platform/include \
-		$(SDK)/WICED/platform/ARM_CM3 \
-		$(SDK)/WICED/platform/MCU/$(WICED_MCU)/peripherals \
+		$(SDK)/WICED/platform/include
+
+ifeq '$(CORTEX)' 'm3'
+DIR_USRINC +=		$(SDK)/WICED/platform/ARM_CM3
+endif
+
+ifeq '$(CORTEX)' 'm4'
+DIR_USRINC +=		$(SDK)/WICED/platform/ARM_CM4
+endif
+
+DIR_USRINC +=		$(SDK)/WICED/platform/MCU/$(WICED_MCU)/peripherals \
 		$(SDK)/WICED/platform/MCU/$(WICED_MCU)/WAF \
 		$(SDK)/WICED/WWD \
 		$(SDK)/WICED/WWD/include \
