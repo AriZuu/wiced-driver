@@ -170,3 +170,53 @@ index 6158e30..a13aeae 100644
  WWD_RTOS_MAP_ISR( usart2_tx_dma_irq, DMA1_Stream6_irq )
  WWD_RTOS_MAP_ISR( usart2_rx_dma_irq, DMA1_Stream5_irq )
 +#endif /* MINIMAL_PLATFORM */
+diff --git a/platforms/EMW3165/platform.c b/platforms/EMW3165/platform.c
+index af0e78c..308873f 100644
+--- a/platforms/EMW3165/platform.c
++++ b/platforms/EMW3165/platform.c
+@@ -93,6 +93,7 @@ const platform_gpio_t platform_gpio_pins[] =
+ 
+ };
+ 
++#ifndef MINIMAL_PLATFORM
+ /* ADC peripherals. Used WICED/platform/MCU/wiced_platform_common.c */
+ const platform_adc_t platform_adc_peripherals[] =
+ {
+@@ -297,6 +298,8 @@ static platform_uart_config_t stdio_config =
+ };
+ #endif
+ 
++#endif /* MINIMAL_PLATFORM */
++
+ /* Wi-Fi control pins. Used by platform/MCU/wlan_platform_common.c
+ * SDIO: EMW1062_PIN_BOOTSTRAP[1:0] = b'00
+ * gSPI: EMW1062_PIN_BOOTSTRAP[1:0] = b'01
+@@ -328,6 +331,7 @@ void platform_init_peripheral_irq_priorities( void )
+     NVIC_SetPriority( RTC_WKUP_IRQn    ,  1 ); /* RTC Wake-up event   */
+     NVIC_SetPriority( SDIO_IRQn        ,  2 ); /* WLAN SDIO           */
+     NVIC_SetPriority( DMA2_Stream3_IRQn,  3 ); /* WLAN SDIO DMA       */
++#ifndef MINIMAL_PLATFORM
+     NVIC_SetPriority( DMA1_Stream3_IRQn,  3 ); /* WLAN SPI DMA        */
+     NVIC_SetPriority( USART1_IRQn      ,  6 ); /* WICED_UART_1        */
+     NVIC_SetPriority( USART2_IRQn      ,  6 ); /* WICED_UART_2        */
+@@ -335,6 +339,7 @@ void platform_init_peripheral_irq_priorities( void )
+     NVIC_SetPriority( DMA2_Stream2_IRQn,  7 ); /* WICED_UART_1 RX DMA */
+     NVIC_SetPriority( DMA1_Stream6_IRQn,  7 ); /* WICED_UART_2 TX DMA */
+     NVIC_SetPriority( DMA1_Stream5_IRQn,  7 ); /* WICED_UART_2 RX DMA */
++#endif /* MINIMAL_PLATFORM */
+     NVIC_SetPriority( EXTI0_IRQn       , 14 ); /* GPIO                */
+     NVIC_SetPriority( EXTI1_IRQn       , 14 ); /* GPIO                */
+     NVIC_SetPriority( EXTI2_IRQn       , 14 ); /* GPIO                */
+@@ -419,6 +424,7 @@ wiced_bool_t platform_check_factory_reset( void )
+     return WICED_FALSE;
+ }
+ 
++#ifndef MINIMAL_PLATFORM
+ /******************************************************
+  *           Interrupt Handler Definitions
+  ******************************************************/
+@@ -464,3 +470,4 @@ WWD_RTOS_MAP_ISR( usart1_rx_dma_irq, DMA2_Stream2_irq )
+ WWD_RTOS_MAP_ISR( usart2_irq       , USART2_irq       )
+ WWD_RTOS_MAP_ISR( usart2_tx_dma_irq, DMA1_Stream6_irq )
+ WWD_RTOS_MAP_ISR( usart2_rx_dma_irq, DMA1_Stream5_irq )
++#endif
