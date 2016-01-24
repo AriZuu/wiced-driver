@@ -55,7 +55,7 @@ endif
 #
 # Pico]OS wiced stuff
 #
-SRC_TXT +=	picoos/WWD/wwd_rtos.c picoos/WWD/resources.c picoos/WWD/low_level_init.c
+SRC_TXT +=	picoos/WWD/wwd_rtos.c picoos/WWD/resources.c picoos/WWD/low_level_init.c utils.c
 
 #
 # WWD sources
