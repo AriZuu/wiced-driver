@@ -11,7 +11,7 @@ in Wiced SDIO layer requires that Wiced headers begin on 32-bit boundary - at le
 on STM32F2xx).
 
 I have tested this using MXCHIP EMW3162 module + EMB-380-S2 development board (both are
-available at least from seeedstudio.com).
+available at least from seeedstudio.com). It works also with WifiMCU, which uses EMW3165.
 
 To compile this, you'll need:
 
@@ -25,7 +25,7 @@ library. Apply patch to make it work with Pico]OS:
 cd WICED-SDK-3.3.1; patch -p1 < ../wiced.patch
 
 The patch modifies wwd_buffer.c & wwd_network.c so that they work with stock LwIP.
-EMW3162 platform.c is modified so that UART stuff is excluded, as
+EMW316x platform.c is modified so that UART stuff is excluded, as
 Pico]OS has it's own console support.
 
 Library doesn't use Wiced SDK Makefiles (Pico]OS Makefile system is used instead).
