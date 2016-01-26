@@ -46,7 +46,7 @@ WICED_BUS	?= SDIO
 
 SDK	= WICED-SDK-3.3.1
 
-EXTRA_CFLAGS = -Wno-cast-align
+EXTRA_CFLAGS = -Wno-cast-align -Wno-missing-field-initializers
 
 ifeq '$(WICED_PLATFORM)' 'EMW3165'
 CDEFINES += GPIO_LED_NOT_SUPPORTED
