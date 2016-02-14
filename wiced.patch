@@ -63,18 +63,20 @@ index 4e7f56d..7307646 100644
 -    }
 -}
 diff --git a/WICED/network/LwIP/WWD/wwd_network.c b/WICED/network/LwIP/WWD/wwd_network.c
-index 67da1bb..72d8d42 100644
+index 67da1bb..581deab 100644
 --- a/WICED/network/LwIP/WWD/wwd_network.c
 +++ b/WICED/network/LwIP/WWD/wwd_network.c
-@@ -17,6 +17,7 @@
+@@ -17,7 +17,9 @@
  #include "lwip/debug.h"
  #include "lwip/netif.h"
  #include "lwip/igmp.h"
 +#include "lwip/ethip6.h"
  #include "netif/etharp.h"
++#include "lwip/mld6.h"
  
  #include "wwd_network.h"
-@@ -28,6 +29,7 @@
+ #include "wwd_wifi.h"
+@@ -28,6 +30,7 @@
  #include "wiced_constants.h"
  #include <stdlib.h>
  
@@ -82,7 +84,32 @@ index 67da1bb..72d8d42 100644
  #ifdef ADD_LWIP_EAPOL_SUPPORT
  #define ETHTYPE_EAPOL    0x888E
  #endif
-@@ -168,7 +170,17 @@ static err_t low_level_output( struct netif *netif, /*@only@*/ struct pbuf *p )
+@@ -110,6 +113,10 @@
+ static err_t lwip_igmp_mac_filter( struct netif *netif, ip_addr_t *group, u8_t action );
+ #endif
+ 
++#if LWIP_IPV6 && LWIP_IPV6_MLD
++static err_t lwip_mld_mac_filter(struct netif *netif, const ip6_addr_t *group, u8_t action);
++#endif
++
+ /**
+  * In this function, the hardware should be initialized.
+  * Called from ethernetif_init().
+@@ -136,6 +143,13 @@ static void low_level_init( /*@partial@*/ struct netif *netif )
+     netif->flags = (u8_t) ( NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP );
+ 
+     /* Do whatever else is needed to initialize interface. */
++#if LWIP_IPV6 && LWIP_IPV6_MLD
++    netif->mld_mac_filter = lwip_mld_mac_filter;
++    ip6_addr_t ip6_allnodes_ll;
++    ip6_addr_set_allnodes_linklocal(&ip6_allnodes_ll);
++    netif->mld_mac_filter(netif, &ip6_allnodes_ll, MLD6_ADD_MAC_FILTER);
++#endif /* LWIP_IPV6 && LWIP_IPV6_MLD */
++
+ #if LWIP_IGMP
+     netif->flags |= NETIF_FLAG_IGMP;
+     netif_set_igmp_mac_filter(netif, lwip_igmp_mac_filter);
+@@ -168,7 +182,17 @@ static err_t low_level_output( struct netif *netif, /*@only@*/ struct pbuf *p )
      {
          /* Take a reference to this packet */
          pbuf_ref( p );
@@ -100,7 +127,7 @@ index 67da1bb..72d8d42 100644
          LWIP_ASSERT( "No chained buffers", ( ( p->next == NULL ) && ( ( p->tot_len == p->len ) ) ) );
          wwd_network_send_ethernet_data( p, (wwd_interface_t) (int) netif->state );
  
-@@ -204,6 +216,16 @@ void host_network_process_ethernet_data( /*@only@*/ wiced_buffer_t buffer, wwd_i
+@@ -204,6 +228,16 @@ void host_network_process_ethernet_data( /*@only@*/ wiced_buffer_t buffer, wwd_i
          return;
  
      /* points to packet payload, which starts with an Ethernet header */
@@ -117,7 +144,7 @@ index 67da1bb..72d8d42 100644
      ethernet_header = (struct eth_hdr *) buffer->payload;
  
      ethertype = htons( ethernet_header->type );
-@@ -227,6 +249,7 @@ void host_network_process_ethernet_data( /*@only@*/ wiced_buffer_t buffer, wwd_i
+@@ -227,6 +261,7 @@ void host_network_process_ethernet_data( /*@only@*/ wiced_buffer_t buffer, wwd_i
      switch ( ethertype )
      {
          case WICED_ETHERTYPE_IPv4:
@@ -125,7 +152,7 @@ index 67da1bb..72d8d42 100644
          case WICED_ETHERTYPE_ARP:
  #if PPPOE_SUPPORT
          /* PPPoE packet? */
-@@ -325,6 +348,9 @@ err_t ethernetif_init( /*@partial@*/ struct netif *netif )
+@@ -325,6 +360,9 @@ err_t ethernetif_init( /*@partial@*/ struct netif *netif )
       */
      netif->output = etharp_output;
      netif->linkoutput = low_level_output;
@@ -135,3 +162,49 @@ index 67da1bb..72d8d42 100644
  
      /* Initialize the hardware */
      low_level_init( netif );
+@@ -367,4 +405,45 @@ static err_t lwip_igmp_mac_filter( struct netif *netif, ip_addr_t *group, u8_t a
+ }
+ #endif
+ 
++#if LWIP_IPV6 && LWIP_IPV6_MLD
++static err_t lwip_mld_mac_filter(struct netif *netif, const ip6_addr_t *group, u8_t action)
++{
++  wiced_mac_t mac;
++  uint8_t* g = (uint8_t*)&group->addr[3];
++
++  mac.octet[0] = 0x33;
++  mac.octet[1] = 0x33;
++  mac.octet[2] = g[0];
++  mac.octet[3] = g[1];
++  mac.octet[4] = g[2];
++  mac.octet[5] = g[3];
++
++  /*@-noeffect@*/
++  UNUSED_PARAMETER(netif);
++  /*@+noeffect@*/
++
++  switch ( action )
++  {
++      case MLD6_ADD_MAC_FILTER:
++          if ( wwd_wifi_register_multicast_address( &mac ) != WWD_SUCCESS )
++          {
++              return ERR_VAL;
++          }
++          break;
++
++      case MLD6_DEL_MAC_FILTER:
++          if ( wwd_wifi_unregister_multicast_address( &mac ) != WWD_SUCCESS )
++          {
++              return ERR_VAL;
++          }
++          break;
++
++      default:
++          return ERR_VAL;
++  }
++
++  return ERR_OK;
++}
++#endif
++
+ /********************************** End of file ******************************************/
