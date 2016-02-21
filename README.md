@@ -27,7 +27,7 @@ cd WICED-SDK-3.3.1; patch -p1 < ../wiced.patch
 The patch modifies wwd_buffer.c & wwd_network.c so that they work with stock LwIP.
 
 If the patch doesn't apply cleanly, the problem might be the dos-style line endings
-in SDK files. Issue #1 contains steps the fix them.
+in SDK files. Issue [#1][1] contains steps the fix them.
 
 Library doesn't use Wiced SDK Makefiles (Pico]OS Makefile system is used instead).
 Also, neither LwIP nor RTOS inside SDK is used (LwIP comes from picoos-lwip
@@ -36,3 +36,4 @@ library and RTOS is, well, of course Pico]OS)
 Wifi chip firmware is loaded from /firmware/43362A2.bin, it's up to the
 application to provide the filesystem (romfs from picoos-micro library for example).
 
+[1]: https://github.com/AriZuu/wiced-driver/issues/1
