@@ -63,7 +63,7 @@ index 4e7f56d..7307646 100644
 -    }
 -}
 diff --git a/WICED/network/LwIP/WWD/wwd_network.c b/WICED/network/LwIP/WWD/wwd_network.c
-index 67da1bb..581deab 100644
+index 67da1bb..b4d0b42 100644
 --- a/WICED/network/LwIP/WWD/wwd_network.c
 +++ b/WICED/network/LwIP/WWD/wwd_network.c
 @@ -17,7 +17,9 @@
@@ -95,7 +95,22 @@ index 67da1bb..581deab 100644
  /**
   * In this function, the hardware should be initialized.
   * Called from ethernetif_init().
-@@ -136,6 +143,13 @@ static void low_level_init( /*@partial@*/ struct netif *netif )
+@@ -125,8 +132,14 @@ static void low_level_init( /*@partial@*/ struct netif *netif )
+     /* Setup the physical address of this IP instance. */
+     if ( wwd_wifi_get_mac_address( (wiced_mac_t*) ( netif->hwaddr ), (wwd_interface_t) (int) netif->state ) != WWD_SUCCESS )
+     {
++      /* At least for EMW3165, getting mac address for AP interface fails.
++       * Attempt again with STA interface.
++       */
++      if ( wwd_wifi_get_mac_address( (wiced_mac_t*) ( netif->hwaddr ), WWD_STA_INTERFACE ) != WWD_SUCCESS )
++      {
+         WPRINT_NETWORK_DEBUG(("Couldn't get MAC address\n"));
+         return;
++      }
+     }
+ 
+     /* Set Maximum Transfer Unit */
+@@ -136,6 +149,13 @@ static void low_level_init( /*@partial@*/ struct netif *netif )
      netif->flags = (u8_t) ( NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP );
  
      /* Do whatever else is needed to initialize interface. */
@@ -109,7 +124,7 @@ index 67da1bb..581deab 100644
  #if LWIP_IGMP
      netif->flags |= NETIF_FLAG_IGMP;
      netif_set_igmp_mac_filter(netif, lwip_igmp_mac_filter);
-@@ -168,7 +182,17 @@ static err_t low_level_output( struct netif *netif, /*@only@*/ struct pbuf *p )
+@@ -168,7 +188,17 @@ static err_t low_level_output( struct netif *netif, /*@only@*/ struct pbuf *p )
      {
          /* Take a reference to this packet */
          pbuf_ref( p );
@@ -127,7 +142,7 @@ index 67da1bb..581deab 100644
          LWIP_ASSERT( "No chained buffers", ( ( p->next == NULL ) && ( ( p->tot_len == p->len ) ) ) );
          wwd_network_send_ethernet_data( p, (wwd_interface_t) (int) netif->state );
  
-@@ -204,6 +228,16 @@ void host_network_process_ethernet_data( /*@only@*/ wiced_buffer_t buffer, wwd_i
+@@ -204,6 +234,16 @@ void host_network_process_ethernet_data( /*@only@*/ wiced_buffer_t buffer, wwd_i
          return;
  
      /* points to packet payload, which starts with an Ethernet header */
@@ -144,7 +159,7 @@ index 67da1bb..581deab 100644
      ethernet_header = (struct eth_hdr *) buffer->payload;
  
      ethertype = htons( ethernet_header->type );
-@@ -227,6 +261,7 @@ void host_network_process_ethernet_data( /*@only@*/ wiced_buffer_t buffer, wwd_i
+@@ -227,6 +267,7 @@ void host_network_process_ethernet_data( /*@only@*/ wiced_buffer_t buffer, wwd_i
      switch ( ethertype )
      {
          case WICED_ETHERTYPE_IPv4:
@@ -152,7 +167,7 @@ index 67da1bb..581deab 100644
          case WICED_ETHERTYPE_ARP:
  #if PPPOE_SUPPORT
          /* PPPoE packet? */
-@@ -325,6 +360,9 @@ err_t ethernetif_init( /*@partial@*/ struct netif *netif )
+@@ -325,6 +366,9 @@ err_t ethernetif_init( /*@partial@*/ struct netif *netif )
       */
      netif->output = etharp_output;
      netif->linkoutput = low_level_output;
@@ -162,7 +177,7 @@ index 67da1bb..581deab 100644
  
      /* Initialize the hardware */
      low_level_init( netif );
-@@ -367,4 +405,45 @@ static err_t lwip_igmp_mac_filter( struct netif *netif, ip_addr_t *group, u8_t a
+@@ -367,4 +411,45 @@ static err_t lwip_igmp_mac_filter( struct netif *netif, ip_addr_t *group, u8_t a
  }
  #endif
  
