@@ -32,6 +32,7 @@
 #include "wiced_result.h"
 #include "platform_dct.h"
 #include "wiced_waf_common.h"
+#include "lwip/opt.h"
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -51,20 +52,37 @@ void*    dynamic_nvram_image = &wifi_nvram_image;
 
 #endif
 
+#ifndef WDCFG_FIRMWARE
+#define WDCFG_FIRMWARE "43362A2.bin"
+#endif
+
+#ifndef WDCFG_FIRMWARE_PATH
+#define WDCFG_FIRMWARE_PATH "/firmware"
+#endif
+
+const char* firmwarePath[] = { WDCFG_FIRMWARE_PATH };
+
 wwd_result_t host_platform_resource_size(wwd_resource_t resource, uint32_t* size_out)
 {
   if (resource == WWD_RESOURCE_WLAN_FIRMWARE) {
 
     struct stat st;
-
+    unsigned int i;
 /*
  * Get size of firmware from filesystem.
  */
-    if (stat("/firmware/43362A2.bin", &st) == -1)
-       return RESOURCE_UNSUPPORTED;
+    for (i = 0; i < sizeof(firmwarePath) / sizeof(firmwarePath[0]); i++) {
 
-     *size_out = st.st_size;
-     return WWD_SUCCESS;
+      char buf[80];
+      sprintf(buf, "%s/%s", firmwarePath[i], WDCFG_FIRMWARE);
+      if (stat(buf, &st) != -1) {
+
+        *size_out = st.st_size;
+        return WWD_SUCCESS;
+      }
+    }
+
+    return RESOURCE_UNSUPPORTED;
   }
   else
   {
@@ -83,22 +101,30 @@ wwd_result_t host_platform_resource_read_indirect(wwd_resource_t resource,
   if (resource == WWD_RESOURCE_WLAN_FIRMWARE) {
 
     int fd;
+    unsigned int i;
 
-    fd = open("/firmware/43362A2.bin", O_RDONLY);
-    if (fd == -1)
-       return RESOURCE_UNSUPPORTED;
+    for (i = 0; i < sizeof(firmwarePath) / sizeof(firmwarePath[0]); i++) {
 
-    if (lseek(fd, offset, SEEK_SET) == -1) {
+      char buf[80];
+      sprintf(buf, "%s/%s", firmwarePath[i], WDCFG_FIRMWARE);
+      fd = open(buf, O_RDONLY);
+      if (fd != -1) {
 
-       *size_out = 0;
-    }
-    else {
+        if (lseek(fd, offset, SEEK_SET) == -1) {
+
+           *size_out = 0;
+        }
+        else {
  
-       *size_out = read(fd, buffer, buffer_size);
+           *size_out = read(fd, buffer, buffer_size);
+        }
+
+        close(fd);
+        return WWD_SUCCESS;
+      }
     }
 
-    close(fd);
-    return WWD_SUCCESS;
+    return RESOURCE_UNSUPPORTED;
   }
   else {
 
