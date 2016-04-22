@@ -55,7 +55,7 @@ endif
 #
 # Pico]OS wiced stuff
 #
-SRC_TXT +=	picoos/WWD/wwd_rtos.c picoos/WWD/resources.c picoos/WWD/low_level_init.c utils.c
+SRC_TXT +=	picoos/WWD/wwd_rtos.c picoos/WWD/resources.c picoos/WWD/low_level_init.c utils.c powersave.c
 
 #
 # WWD sources
@@ -85,9 +85,7 @@ SRC_TXT +=	$(SDK)/WICED/network/LwIP/WWD/wwd_buffer.c \
 
 # platform
 SRC_TXT +=	$(SDK)/WICED/platform/MCU/wwd_platform_separate_mcu.c \
-		$(SDK)/WICED/platform/MCU/$(WICED_MCU)/peripherals/platform_mcu_powersave.c \
 		$(SDK)/WICED/platform/MCU/$(WICED_MCU)/peripherals/platform_gpio.c \
-		$(SDK)/WICED/platform/MCU/$(WICED_MCU)/peripherals/platform_rtc.c \
 		$(SDK)/WICED/platform/MCU/$(WICED_MCU)/peripherals/platform_watchdog.c \
 		$(SDK)/WICED/platform/MCU/$(WICED_MCU)/platform_init.c \
 		$(SDK)/platforms/$(WICED_PLATFORM)/platform.c
