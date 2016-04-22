@@ -58,3 +58,8 @@ void wdSystemInit()
   SystemCoreClock = CPU_CLOCK_HZ;
 }
 
+void __attribute__((weak)) portRestoreClocksAfterWakeup()
+{
+  platform_init_system_clocks();
+}
+
