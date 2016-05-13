@@ -223,3 +223,25 @@ index 67da1bb..b4d0b42 100644
 +#endif
 +
  /********************************** End of file ******************************************/
+diff --git a/platforms/EMW3165/platform_config.h b/platforms/EMW3165/platform_config.h
+index e170e3e..02e4760 100644
+--- a/platforms/EMW3165/platform_config.h
++++ b/platforms/EMW3165/platform_config.h
+@@ -30,7 +30,7 @@ extern "C" {
+ #define WICED_WIFI_USE_GPIO_FOR_BOOTSTRAP_1
+  
+ /*  Wi-Fi GPIO0 pin is used for out-of-band interrupt */
+-#define WICED_WIFI_OOB_IRQ_GPIO_PIN  ( 0 )
++#define WICED_WIFI_OOB_IRQ_GPIO_PIN  ( 1 )
+ 
+ /*  Wi-Fi power pin is present */
+ //#define WICED_USE_WIFI_POWER_PIN
+@@ -39,7 +39,7 @@ extern "C" {
+ #define WICED_USE_WIFI_RESET_PIN
+ 
+ /* */
+-#define WICED_USE_WIFI_32K_CLOCK_MCO
++//#define WICED_USE_WIFI_32K_CLOCK_MCO
+ 
+ /*  OTA */
+ #define PLATFORM_HAS_OTA
