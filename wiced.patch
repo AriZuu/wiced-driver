@@ -1,29 +1,8 @@
-diff --git a/.gitignore b/.gitignore
-new file mode 100644
-index 0000000..1955793
---- /dev/null
-+++ b/.gitignore
-@@ -0,0 +1 @@
-+generated_mac_address.txt
 diff --git a/WICED/network/LwIP/WWD/wwd_buffer.c b/WICED/network/LwIP/WWD/wwd_buffer.c
-index 4e7f56d..7307646 100644
+index 296493a..3e06c4c 100644
 --- a/WICED/network/LwIP/WWD/wwd_buffer.c
 +++ b/WICED/network/LwIP/WWD/wwd_buffer.c
-@@ -11,11 +11,11 @@
- #include "network/wwd_buffer_interface.h"
- #include "platform/wwd_bus_interface.h"
- #include "lwip/netbuf.h"
--#include "FreeRTOS.h"
-+#include "lwip/pbuf.h"
- #include "lwip/memp.h"
--#include "task.h"
- #include <string.h> /* for NULL */
- #include "wwd_assert.h"
-+#include "network/wwd_network_constants.h"
- 
- void memp_free_notify( unsigned int type );
- 
-@@ -29,8 +29,7 @@ wwd_result_t host_buffer_init( /*@null@*/ /*@unused@*/ void * native_arg )
+@@ -29,8 +29,7 @@ wwd_result_t wwd_buffer_init( /*@null@*/ /*@unused@*/ void * native_arg )
  
  wwd_result_t host_buffer_check_leaked( void )
  {
@@ -33,20 +12,16 @@ index 4e7f56d..7307646 100644
      wiced_assert( "pbuf ref/rom Buffer leakage", memp_in_use( MEMP_PBUF ) == 0 );
      return WWD_SUCCESS;
  }
-@@ -54,10 +53,10 @@ wwd_result_t host_buffer_get( /*@special@*/ /*@out@*/ wiced_buffer_t* buffer, ww
+@@ -53,7 +52,7 @@ wwd_result_t internal_host_buffer_get( wiced_buffer_t * buffer, wwd_buffer_dir_t
  
      do
      {
 -        *buffer = pbuf_alloc( PBUF_RAW, size, ( direction == WWD_NETWORK_RX ) ? PBUF_POOL_RX : PBUF_POOL_TX );
 +        *buffer = pbuf_alloc( PBUF_RAW, size, PBUF_POOL);
-     } while ( ( *buffer == NULL ) &&
-               ( wait == WICED_TRUE ) &&
--              ( vTaskDelay( (portTickType) 1 ), 1 == 1 ) );
-+              ( posTaskSleep( 1 ), 1 == 1 ) );
-     if ( *buffer == NULL )
-     {
- #if 0
-@@ -127,15 +126,3 @@ wwd_result_t host_buffer_set_size( /*@temp@*/ wiced_buffer_t buffer, unsigned sh
+         if ( *buffer != NULL )
+         {
+             break;
+@@ -137,15 +136,3 @@ wwd_result_t host_buffer_set_size( /*@temp@*/ wiced_buffer_t buffer, unsigned sh
           return WWD_SUCCESS;
  }
  
@@ -63,7 +38,7 @@ index 4e7f56d..7307646 100644
 -    }
 -}
 diff --git a/WICED/network/LwIP/WWD/wwd_network.c b/WICED/network/LwIP/WWD/wwd_network.c
-index 67da1bb..b4d0b42 100644
+index 4fa4593..85be9c8 100644
 --- a/WICED/network/LwIP/WWD/wwd_network.c
 +++ b/WICED/network/LwIP/WWD/wwd_network.c
 @@ -17,7 +17,9 @@
@@ -167,7 +142,7 @@ index 67da1bb..b4d0b42 100644
          case WICED_ETHERTYPE_ARP:
  #if PPPOE_SUPPORT
          /* PPPoE packet? */
-@@ -325,6 +366,9 @@ err_t ethernetif_init( /*@partial@*/ struct netif *netif )
+@@ -323,6 +364,9 @@ err_t ethernetif_init( /*@partial@*/ struct netif *netif )
       */
      netif->output = etharp_output;
      netif->linkoutput = low_level_output;
@@ -177,7 +152,7 @@ index 67da1bb..b4d0b42 100644
  
      /* Initialize the hardware */
      low_level_init( netif );
-@@ -367,4 +411,45 @@ static err_t lwip_igmp_mac_filter( struct netif *netif, ip_addr_t *group, u8_t a
+@@ -365,4 +409,45 @@ static err_t lwip_igmp_mac_filter( struct netif *netif, ip_addr_t *group, u8_t a
  }
  #endif
  
@@ -224,7 +199,7 @@ index 67da1bb..b4d0b42 100644
 +
  /********************************** End of file ******************************************/
 diff --git a/platforms/EMW3165/platform_config.h b/platforms/EMW3165/platform_config.h
-index e170e3e..02e4760 100644
+index 9ce21f2..fef5eb4 100644
 --- a/platforms/EMW3165/platform_config.h
 +++ b/platforms/EMW3165/platform_config.h
 @@ -30,7 +30,7 @@ extern "C" {

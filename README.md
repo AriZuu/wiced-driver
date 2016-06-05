@@ -16,13 +16,13 @@ available at least from seeedstudio.com). It works also with WifiMCU, which uses
 To compile this, you'll need:
 
 - WICED SDK package from Broadcom (free, but registration required, redistribution not allowed)
-- MXCHIP patches from github (https://github.com/MXCHIP-EMW/WICED-for-EMW)
+- MXCHIP patches from github (https://github.com/MXCHIP/MXCHIP-for-WICED)
   Just follow instructions there.
 
-After SDK is extracted and patched, move it to WICED-SDK-3.3.1 subdirectory of this
+After SDK is extracted and patched, move it to WICED-SDK-3.5.2 subdirectory of this
 library. Apply patch to make it work with Pico]OS:
 
-cd WICED-SDK-3.3.1; patch -p1 < ../wiced.patch
+cd WICED-SDK-3.5.2; patch -p1 < ../wiced.patch
 
 The patch modifies wwd_buffer.c & wwd_network.c so that they work with stock LwIP.
 

@@ -44,7 +44,7 @@ WICED_MCU	?= STM32F2xx
 WICED_PLATFORM  ?= EMW3162
 WICED_BUS	?= SDIO
 
-SDK	= WICED-SDK-3.3.1
+SDK	= WICED-SDK-3.5.2
 
 EXTRA_CFLAGS = -Wno-cast-align -Wno-missing-field-initializers
 
@@ -62,13 +62,14 @@ SRC_TXT +=	picoos/WWD/wwd_rtos.c picoos/WWD/resources.c picoos/WWD/low_level_ini
 #
 SRC_TXT +=	$(SDK)/WICED/WWD/internal/wwd_management.c \
 		$(SDK)/WICED/WWD/internal/wwd_internal.c \
-		$(SDK)/WICED/WWD/internal/wwd_crypto.c \
 		$(SDK)/WICED/WWD/internal/wwd_eapol.c \
 		$(SDK)/WICED/WWD/internal/wwd_sdpcm.c \
 		$(SDK)/WICED/WWD/internal/wwd_thread.c \
+		$(SDK)/WICED/WWD/internal/wwd_thread_internal.c \
 		$(SDK)/WICED/WWD/internal/wwd_logging.c \
 		$(SDK)/WICED/WWD/internal/wwd_wifi.c \
-		$(SDK)/WICED/WWD/internal/chips/$(WICED_CHIP)/wwd_ap.c
+		$(SDK)/WICED/WWD/internal/chips/$(WICED_CHIP)/wwd_ap.c \
+		$(SDK)/WICED/WWD/internal/chips/$(WICED_CHIP)/wwd_chip_specific_functions.c
 #
 # bus protocols
 #
@@ -104,6 +105,7 @@ CDEFINES  += 	WICED_DISABLE_BOOTLOADER \
 
 DIR_USRINC +=	$(SDK)/libraries/utilities/TLV \
 		$(SDK)/libraries/utilities/ring_buffer \
+		$(SDK)/WICED/security/BESL/include \
 		$(SDK)/WICED/platform/GCC
 
 

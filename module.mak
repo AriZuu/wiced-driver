@@ -1,4 +1,4 @@
-SDK		= $(MOD)/WICED-SDK-3.3.1
+SDK		= $(MOD)/WICED-SDK-3.5.2
 
 WICED_CHIP	?= 43362A2
 WICED_MCU	?= STM32F2xx
@@ -8,7 +8,10 @@ WICED_BUS	?= SDIO
 export WICED_CHIP WICED_MCU WICED_PLATFORM WICED_BUS
 
 DIR_MODINC +=	$(SDK)/WICED/WWD/include \
+	 	$(SDK)/WICED/WWD/ \
+	 	$(SDK)/WICED/WWD/include/network \
 	 	$(SDK)/WICED/WWD/internal/chips/$(WICED_CHIP) \
+		$(SDK)/WICED/WWD/internal/bus_protocols/$(WICED_BUS) \
 	 	$(SDK)/WICED/platform/include \
 		$(SDK)/WICED/network/LwIP/WWD \
 		$(SDK)/include \
