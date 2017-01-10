@@ -1,18 +1,18 @@
 diff --git a/WICED/network/LwIP/WWD/wwd_buffer.c b/WICED/network/LwIP/WWD/wwd_buffer.c
-index 296493a..3e06c4c 100644
+index 296493a..05a8d24 100644
 --- a/WICED/network/LwIP/WWD/wwd_buffer.c
 +++ b/WICED/network/LwIP/WWD/wwd_buffer.c
-@@ -29,8 +29,7 @@ wwd_result_t wwd_buffer_init( /*@null@*/ /*@unused@*/ void * native_arg )
+@@ -29,9 +29,6 @@ wwd_result_t wwd_buffer_init( /*@null@*/ /*@unused@*/ void * native_arg )
  
  wwd_result_t host_buffer_check_leaked( void )
  {
 -    wiced_assert( "pbuf TX pool Buffer leakage", memp_in_use( MEMP_PBUF_POOL_TX ) == 0 );
 -    wiced_assert( "pbuf RX pool Buffer leakage", memp_in_use( MEMP_PBUF_POOL_RX ) == 0 );
-+    wiced_assert( "pbuf pool Buffer leakage", memp_in_use( MEMP_PBUF_POOL ) == 0 );
-     wiced_assert( "pbuf ref/rom Buffer leakage", memp_in_use( MEMP_PBUF ) == 0 );
+-    wiced_assert( "pbuf ref/rom Buffer leakage", memp_in_use( MEMP_PBUF ) == 0 );
      return WWD_SUCCESS;
  }
-@@ -53,7 +52,7 @@ wwd_result_t internal_host_buffer_get( wiced_buffer_t * buffer, wwd_buffer_dir_t
+ 
+@@ -53,7 +50,7 @@ wwd_result_t internal_host_buffer_get( wiced_buffer_t * buffer, wwd_buffer_dir_t
  
      do
      {
@@ -21,7 +21,7 @@ index 296493a..3e06c4c 100644
          if ( *buffer != NULL )
          {
              break;
-@@ -137,15 +136,3 @@ wwd_result_t host_buffer_set_size( /*@temp@*/ wiced_buffer_t buffer, unsigned sh
+@@ -137,15 +134,3 @@ wwd_result_t host_buffer_set_size( /*@temp@*/ wiced_buffer_t buffer, unsigned sh
           return WWD_SUCCESS;
  }
  
@@ -38,7 +38,7 @@ index 296493a..3e06c4c 100644
 -    }
 -}
 diff --git a/WICED/network/LwIP/WWD/wwd_network.c b/WICED/network/LwIP/WWD/wwd_network.c
-index 4fa4593..85be9c8 100644
+index 4fa4593..d83b1ec 100644
 --- a/WICED/network/LwIP/WWD/wwd_network.c
 +++ b/WICED/network/LwIP/WWD/wwd_network.c
 @@ -17,7 +17,9 @@
@@ -93,7 +93,7 @@ index 4fa4593..85be9c8 100644
 +    netif->mld_mac_filter = lwip_mld_mac_filter;
 +    ip6_addr_t ip6_allnodes_ll;
 +    ip6_addr_set_allnodes_linklocal(&ip6_allnodes_ll);
-+    netif->mld_mac_filter(netif, &ip6_allnodes_ll, MLD6_ADD_MAC_FILTER);
++    netif->mld_mac_filter(netif, &ip6_allnodes_ll, NETIF_ADD_MAC_FILTER);
 +#endif /* LWIP_IPV6 && LWIP_IPV6_MLD */
 +
  #if LWIP_IGMP
@@ -152,6 +152,23 @@ index 4fa4593..85be9c8 100644
  
      /* Initialize the hardware */
      low_level_init( netif );
+@@ -343,14 +387,14 @@ static err_t lwip_igmp_mac_filter( struct netif *netif, ip_addr_t *group, u8_t a
+ 
+     switch ( action )
+     {
+-        case IGMP_ADD_MAC_FILTER:
++        case NETIF_ADD_MAC_FILTER:
+             if ( wwd_wifi_register_multicast_address( &mac ) != WWD_SUCCESS )
+             {
+                 return ERR_VAL;
+             }
+             break;
+ 
+-        case IGMP_DEL_MAC_FILTER:
++        case NETIF_DEL_MAC_FILTER:
+             if ( wwd_wifi_unregister_multicast_address( &mac ) != WWD_SUCCESS )
+             {
+                 return ERR_VAL;
 @@ -365,4 +409,45 @@ static err_t lwip_igmp_mac_filter( struct netif *netif, ip_addr_t *group, u8_t a
  }
  #endif
@@ -175,14 +192,14 @@ index 4fa4593..85be9c8 100644
 +
 +  switch ( action )
 +  {
-+      case MLD6_ADD_MAC_FILTER:
++      case NETIF_ADD_MAC_FILTER:
 +          if ( wwd_wifi_register_multicast_address( &mac ) != WWD_SUCCESS )
 +          {
 +              return ERR_VAL;
 +          }
 +          break;
 +
-+      case MLD6_DEL_MAC_FILTER:
++      case NETIF_DEL_MAC_FILTER:
 +          if ( wwd_wifi_unregister_multicast_address( &mac ) != WWD_SUCCESS )
 +          {
 +              return ERR_VAL;
