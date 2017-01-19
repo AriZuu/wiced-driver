@@ -44,5 +44,10 @@
 typedef POSTASK_t host_thread_type_t;
 typedef POSSEMA_t host_semaphore_type_t;
 typedef UosRing* host_queue_type_t;
+typedef struct {
+
+    uint8_t dummy;
+} host_rtos_thread_config_type_t;
+
 
 #endif /* ifndef INCLUDED_WWD_RTOS_H_ */
