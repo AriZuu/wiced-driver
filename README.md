@@ -19,10 +19,10 @@ To compile this, you'll need:
 - MXCHIP patches from github (https://github.com/MXCHIP/MXCHIP-for-WICED)
   Just follow instructions there.
 
-After SDK is extracted and patched, move it to WICED-SDK-3.5.2 subdirectory of this
+After SDK is extracted and patched, move it to WICED-SDK-3.7.0-7 subdirectory of this
 library. Apply patch to make it work with Pico]OS:
 
-cd WICED-SDK-3.5.2; patch -p1 < ../wiced.patch
+cd WICED-SDK-3.7.0-7; patch -p1 < ../wiced.patch
 
 The patch modifies wwd_buffer.c & wwd_network.c so that they work with stock LwIP.
 
