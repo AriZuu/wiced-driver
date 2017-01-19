@@ -44,7 +44,7 @@ WICED_MCU	?= STM32F2xx
 WICED_PLATFORM  ?= EMW3162
 WICED_BUS	?= SDIO
 
-SDK	= WICED-SDK-3.5.2
+SDK	= WICED-SDK-3.7.0-7
 
 EXTRA_CFLAGS = -Wno-cast-align -Wno-missing-field-initializers
 
@@ -67,6 +67,7 @@ SRC_TXT +=	$(SDK)/WICED/WWD/internal/wwd_management.c \
 		$(SDK)/WICED/WWD/internal/wwd_thread.c \
 		$(SDK)/WICED/WWD/internal/wwd_thread_internal.c \
 		$(SDK)/WICED/WWD/internal/wwd_logging.c \
+		$(SDK)/WICED/WWD/internal/wwd_ap_common.c \
 		$(SDK)/WICED/WWD/internal/wwd_wifi.c \
 		$(SDK)/WICED/WWD/internal/chips/$(WICED_CHIP)/wwd_ap.c \
 		$(SDK)/WICED/WWD/internal/chips/$(WICED_CHIP)/wwd_chip_specific_functions.c
