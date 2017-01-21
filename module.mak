@@ -1,4 +1,4 @@
-WICED_SDK		:= $(MOD)/WICED-SDK-3.5.2
+WICED_SDK		:= $(MOD)/WICED-SDK-3.7.0-7
 
 WICED_CHIP	?= 43362A2
 WICED_MCU	?= STM32F2xx
@@ -16,6 +16,14 @@ DIR_MODINC +=	$(WICED_SDK)/WICED/WWD/include \
 		$(WICED_SDK)/include \
 		$(WICED_SDK)/platforms/$(WICED_PLATFORM) \
 		$(MOD)/glue $(MOD)/glue/ports/$(PORT) $(MOD)
+
+ifeq '$(CORTEX)' 'm3'
+DIR_MODINC +=		$(WICED_SDK)/WICED/platform/ARM_CM3
+endif
+
+ifeq '$(CORTEX)' 'm4'
+DIR_MODINC +=		$(WICED_SDK)/WICED/platform/ARM_CM4
+endif
 
 LWIP_DRIVER_INC += $(DIR_MODINC)
 export LWIP_DRIVER_INC
