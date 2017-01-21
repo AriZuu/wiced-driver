@@ -44,7 +44,7 @@ WICED_MCU	?= STM32F2xx
 WICED_PLATFORM  ?= EMW3162
 WICED_BUS	?= SDIO
 
-SDK	= WICED-SDK-3.7.0-7
+SDK	= WICED-SDK-4.1.0
 
 EXTRA_CFLAGS = -Wno-cast-align -Wno-missing-field-initializers
 
@@ -129,6 +129,7 @@ DIR_USRINC +=		$(SDK)/WICED/platform/MCU/$(WICED_MCU)/peripherals \
 		$(SDK)/WICED/WWD/include/network \
 		$(SDK)/WICED/WWD/internal/bus_protocols/$(WICED_BUS) \
 		$(SDK)/WICED/WWD/internal/chips/$(WICED_CHIP) \
+		$(SDK)/WICED/WWD/include/RTOS \
 		glue \
 		glue/ports/$(PORT) \
 		$(SDK)/WICED \
