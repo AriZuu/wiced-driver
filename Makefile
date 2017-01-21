@@ -81,8 +81,8 @@ SRC_TXT +=	$(SDK)/WICED/WWD/internal/bus_protocols/wwd_bus_common.c \
 #
 # WWD lwip support
 #
-SRC_TXT +=	$(SDK)/WICED/network/LwIP/WWD/wwd_buffer.c \
-		$(SDK)/WICED/network/LwIP/WWD/wwd_network.c
+SRC_TXT +=	picoos/lwip/buffer.c \
+		picoos/lwip/wlan_if.c
 
 # platform
 SRC_TXT +=	$(SDK)/WICED/platform/MCU/wwd_platform_separate_mcu.c \
@@ -128,7 +128,7 @@ DIR_USRINC +=		$(SDK)/WICED/platform/MCU/$(WICED_MCU)/peripherals \
 		$(SDK)/WICED/WWD/include/network \
 		$(SDK)/WICED/WWD/internal/bus_protocols/$(WICED_BUS) \
 		$(SDK)/WICED/WWD/internal/chips/$(WICED_CHIP) \
-		$(SDK)/WICED/network/LwIP/WWD \
+		picoos/lwip \
 		picoos/WWD ports/$(PORT) \
 		$(SDK)/WICED \
 		$(SDK)/platforms/$(WICED_PLATFORM) \
