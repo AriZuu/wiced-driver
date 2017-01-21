@@ -79,16 +79,15 @@ low_level_init(struct netif *netif)
 {
   wwd_result_t result;
 
-  /* set MAC hardware address length */
+  // set MAC hardware address
   netif->hwaddr_len = ETHARP_HWADDR_LEN;
-
   result = wwd_wifi_get_mac_address((wiced_mac_t*)netif->hwaddr, (wwd_interface_t)netif->state);
   P_ASSERT("wlan mac address valid", result != WWD_SUCCESS);
   
-  /* maximum transfer unit */
+  // maximum transfer unit
   netif->mtu = WICED_PAYLOAD_MTU;
 
-  /* device capabilities */
+  // device capabilities
   netif->flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
 
 #if LWIP_IPV6 && LWIP_IPV6_MLD
@@ -144,12 +143,12 @@ low_level_output(struct netif *netif, struct pbuf *p)
     MIB2_STATS_NETIF_ADD(netif, ifoutoctets, p->tot_len);
     if (((u8_t*)p->payload)[0] & 1) {
     
-      /* broadcast or multicast packet*/
+      // broadcast or multicast packet
       MIB2_STATS_NETIF_INC(netif, ifoutnucastpkts);
     }
     else {
     
-      /* unicast packet */
+      // unicast packet
       MIB2_STATS_NETIF_INC(netif, ifoutucastpkts);
     }
 
@@ -195,18 +194,19 @@ void host_network_process_ethernet_data(wiced_buffer_t p, wwd_interface_t interf
   MIB2_STATS_NETIF_ADD(netif, ifinoctets, p->tot_len);
   if (((u8_t*)p->payload)[0] & 1) {
 
-    /* broadcast or multicast packet*/
+    // broadcast or multicast packet
     MIB2_STATS_NETIF_INC(netif, ifinnucastpkts);
   }
   else {
 
-    /* unicast packet*/
+    // unicast packet
     MIB2_STATS_NETIF_INC(netif, ifinucastpkts);
   }
 
   LINK_STATS_INC(link.recv);
 
-#warning LWIP_HOOK_UNKNOWN_ETH_PROTOCOL voi hoitaa EAPOL
+  // EAPOL packets are not handled by netif->input, eventually
+  // LWIP_HOOK_UNKNOWN_ETH_PROTOCOL should be setup to process them.
   if (netif->input(p, netif) != ERR_OK) {
 
     LWIP_DEBUGF(NETIF_DEBUG, ("ethernetif_input: IP input error\n"));
@@ -233,11 +233,10 @@ ethernetif_init(struct netif *netif)
   LWIP_ASSERT("netif != NULL", (netif != NULL));
 
 #if LWIP_NETIF_HOSTNAME
-  /* Initialize interface hostname */
   netif->hostname = "lwip";
 #endif /* LWIP_NETIF_HOSTNAME */
 
-  /* Check netif for being valid WICED interface */
+  // Check netif for being valid WICED interface
   if ((wwd_interface_t)netif->state > WWD_ETHERNET_INTERFACE)
     return ERR_ARG;
     
@@ -250,10 +249,13 @@ ethernetif_init(struct netif *netif)
 
   netif->name[0] = IFNAME0;
   netif->name[1] = IFNAME1;
-  /* We directly use etharp_output() here to save a function call.
+
+  /*
+   * We directly use etharp_output() here to save a function call.
    * You can instead declare your own function an call etharp_output()
    * from it if you have to do some checks before sending (e.g. if link
-   * is available...) */
+   * is available...)
+   */
   netif->output = etharp_output;
 #if LWIP_IPV6
   netif->output_ip6 = ethip6_output;
@@ -337,5 +339,3 @@ static err_t mld_mac_filter(struct netif *netif, const ip6_addr_t *group, u8_t a
 }
 
 #endif
-
-/********************************** End of file ******************************************/
