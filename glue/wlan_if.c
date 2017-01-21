@@ -36,6 +36,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "wiced-driver.h"
 
 #include "lwip/opt.h"
 #include "lwip/def.h"
@@ -54,7 +55,6 @@
 #include "wwd_assert.h"
 #include "wiced_constants.h"
 #include "wwd_bus_protocol.h"
-#include "wwd_network.h"
 
 /* Define those to better describe your network interface. */
 #define IFNAME0 'w'

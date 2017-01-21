@@ -36,11 +36,15 @@ extern "C"
 {
 #endif /* __cplusplus */
 
+#include "lwip/netif.h"
+
 /**
  * Perform job similary to CMSIS SystenInit, but using
  * functions provided by Wiced SDK.
  */
 void wdSystemInit(void);
+
+extern err_t ethernetif_init(struct netif *netif);
 
 #ifdef __cplusplus
 } // extern "C"

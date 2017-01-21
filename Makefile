@@ -55,7 +55,7 @@ endif
 #
 # Pico]OS wiced stuff
 #
-SRC_TXT +=	picoos/WWD/wwd_rtos.c picoos/WWD/resources.c picoos/WWD/low_level_init.c utils.c powersave.c
+SRC_TXT +=	glue/rtos.c glue/resources.c glue/low_level_init.c utils.c powersave.c
 
 #
 # WWD sources
@@ -81,8 +81,8 @@ SRC_TXT +=	$(SDK)/WICED/WWD/internal/bus_protocols/wwd_bus_common.c \
 #
 # WWD lwip support
 #
-SRC_TXT +=	picoos/lwip/buffer.c \
-		picoos/lwip/wlan_if.c
+SRC_TXT +=	glue/buffer.c \
+		glue/wlan_if.c
 
 # platform
 SRC_TXT +=	$(SDK)/WICED/platform/MCU/wwd_platform_separate_mcu.c \
@@ -128,8 +128,8 @@ DIR_USRINC +=		$(SDK)/WICED/platform/MCU/$(WICED_MCU)/peripherals \
 		$(SDK)/WICED/WWD/include/network \
 		$(SDK)/WICED/WWD/internal/bus_protocols/$(WICED_BUS) \
 		$(SDK)/WICED/WWD/internal/chips/$(WICED_CHIP) \
-		picoos/lwip \
-		picoos/WWD ports/$(PORT) \
+		glue \
+		glue/ports/$(PORT) \
 		$(SDK)/WICED \
 		$(SDK)/platforms/$(WICED_PLATFORM) \
 		$(SDK)/include

@@ -13,10 +13,9 @@ DIR_MODINC +=	$(WICED_SDK)/WICED/WWD/include \
 	 	$(WICED_SDK)/WICED/WWD/internal/chips/$(WICED_CHIP) \
 		$(WICED_SDK)/WICED/WWD/internal/bus_protocols/$(WICED_BUS) \
 	 	$(WICED_SDK)/WICED/platform/include \
-		$(WICED_SDK)/WICED/network/LwIP/WWD \
 		$(WICED_SDK)/include \
 		$(WICED_SDK)/platforms/$(WICED_PLATFORM) \
-		$(MOD)/picoos/WWD $(MOD)/ports/$(PORT) $(MOD)
+		$(MOD)/glue $(MOD)/glue/ports/$(PORT) $(MOD)
 
 LWIP_DRIVER_INC += $(DIR_MODINC)
 export LWIP_DRIVER_INC
