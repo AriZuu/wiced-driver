@@ -17,14 +17,15 @@ To compile this, you'll need:
 
 - WICED SDK package from Broadcom (free, but registration required, redistribution not allowed)
 - MXCHIP patches from github (https://github.com/MXCHIP/MXCHIP-for-WICED)
-  Just follow instructions there.
+  Just follow instructions there (patches are for SDK 3.5.2, but the work for
+  newer version also).
 
 After SDK is extracted and patched, move it to WICED-SDK-3.7.0-7 subdirectory of this
 library. Apply patch to make it work with Pico]OS:
 
 cd WICED-SDK-3.7.0-7; patch -p1 < ../wiced.patch
 
-The patch modifies wwd_buffer.c & wwd_network.c so that they work with stock LwIP.
+The patch modifies EMW3165 configuration under platforms/EMW3165 to make it work tickless sleep.
 
 If the patch doesn't apply cleanly, the problem might be the dos-style line endings
 in SDK files. Issue [#1][1] contains steps the fix them.
