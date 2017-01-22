@@ -4,6 +4,7 @@ LwIP driver for Cypress WICED WIFI
 This library contains a LwIP driver (for picoos-lwip library).
 I have tested this using MXCHIP EMW3162 module + EMB-380-S2 development board (both are
 available at least from seeedstudio.com). It works also with WifiMCU, which uses EMW3165.
+There is also a [small sensor development board][4] for EMW3165 developed by me.
 
 To compile this, you'll need:
 
@@ -44,3 +45,4 @@ on STM32F2xx).
 [1]: https://github.com/AriZuu/wiced-driver/issues/1
 [2]: http://community.cypress.com
 [3]: https://github.com/MXCHIP/MXCHIP-for-WICED
+[4]: https://github.com/AriZuu/emw-board
