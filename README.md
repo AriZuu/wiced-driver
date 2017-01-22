@@ -7,11 +7,11 @@ available at least from seeedstudio.com). It works also with WifiMCU, which uses
 
 To compile this, you'll need:
 
-- WICED SDK package from Cypress (free, but registration required, redistribution not allowed).
+- [WICED SDK package from Cypress][2] (free, but registration required, redistribution not allowed).
   Starting from 4.0.0 release they no longer provide SDK sources as .7z, but
   SDK can found in 43xxx_Wi-Fi directory under WICED Studio installation. There
   are also other ideas for extracting the sources in WICED forums.
-- MXCHIP patches from github (https://github.com/MXCHIP/MXCHIP-for-WICED)
+- [MXCHIP patches from github][3].
   Just follow instructions there (patches are for SDK 3.5.2, but they work for
   newer version also).
 
@@ -42,3 +42,5 @@ in Wiced SDIO layer requires that Wiced headers begin on 32-bit boundary - at le
 on STM32F2xx).
 
 [1]: https://github.com/AriZuu/wiced-driver/issues/1
+[2]: http://community.cypress.com
+[3]: https://github.com/MXCHIP/MXCHIP-for-WICED
