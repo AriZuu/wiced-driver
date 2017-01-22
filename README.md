@@ -1,4 +1,4 @@
-LwIP driver for Broadcom WICED WIFI
+LwIP driver for Cypress WICED WIFI
 ===================================
 
 This library contains a LwIP driver (for picoos-lwip library). It works with
@@ -15,7 +15,7 @@ available at least from seeedstudio.com). It works also with WifiMCU, which uses
 
 To compile this, you'll need:
 
-- WICED SDK package from Broadcom (free, but registration required, redistribution not allowed).
+- WICED SDK package from Cypress (free, but registration required, redistribution not allowed).
   Starting from 4.0.0 release they no longer provide SDK sources as .7z, but
   SDK can found in 43xxx_Wi-Fi directory under WICED Studio installation. There
   are also other ideas for extracting the sources in WICED forums.
