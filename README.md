@@ -15,15 +15,18 @@ available at least from seeedstudio.com). It works also with WifiMCU, which uses
 
 To compile this, you'll need:
 
-- WICED SDK package from Broadcom (free, but registration required, redistribution not allowed)
+- WICED SDK package from Broadcom (free, but registration required, redistribution not allowed).
+  Starting from 4.0.0 release they no longer provide SDK sources as .7z, but
+  SDK can found in 43xxx_Wi-Fi directory under WICED Studio installation. There
+  are also other ideas for extracting the sources in WICED forums.
 - MXCHIP patches from github (https://github.com/MXCHIP/MXCHIP-for-WICED)
-  Just follow instructions there (patches are for SDK 3.5.2, but the work for
+  Just follow instructions there (patches are for SDK 3.5.2, but they work for
   newer version also).
 
-After SDK is extracted and patched, move it to WICED-SDK-3.7.0-7 subdirectory of this
+After SDK is extracted and patched, move it to WICED-SDK-4.1.0 subdirectory of this
 library. Apply patch to make it work with Pico]OS:
 
-cd WICED-SDK-3.7.0-7; patch -p1 < ../wiced.patch
+cd WICED-SDK-4.1.0; patch -p1 < ../wiced.patch
 
 The patch modifies EMW3165 configuration under platforms/EMW3165 to make it work tickless sleep.
 
