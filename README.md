@@ -1,15 +1,7 @@
 LwIP driver for Cypress WICED WIFI
 ===================================
 
-This library contains a LwIP driver (for picoos-lwip library). It works with
-stock LwIP by using PBUF_LINK_ENCAPSULATION_HLEN to reserve space for Wiced SDK
-headers that exist before ethernet header. Two-byte padding in beginning
-of ethernet frame is used, but the padding word overlaps with last two bytes
-of Wiced SDK headers. A little bit odd, but as LwIP never really touches the contents
-of the padding word this was an easy way to get correctly aligned packet (DMA processing
-in Wiced SDIO layer requires that Wiced headers begin on 32-bit boundary - at least
-on STM32F2xx).
-
+This library contains a LwIP driver (for picoos-lwip library).
 I have tested this using MXCHIP EMW3162 module + EMB-380-S2 development board (both are
 available at least from seeedstudio.com). It works also with WifiMCU, which uses EMW3165.
 
@@ -39,5 +31,14 @@ library and RTOS is, well, of course Pico]OS)
 
 Wifi chip firmware is loaded from /firmware/43362A2.bin, it's up to the
 application to provide the filesystem (romfs from picoos-micro library for example).
+
+To avoid massive changes to LwIP, packet buffer is handled differently than done in
+original Broadcom SDK. PBUF_LINK_ENCAPSULATION_HLEN is used to reserve space for Wiced SDK
+headers that exist before ethernet header. Two-byte padding in beginning
+of ethernet frame is used, but the padding word overlaps with last two bytes
+of Wiced SDK headers. A little bit odd, but as LwIP never really touches the contents
+of the padding word this was an easy way to get correctly aligned packet (DMA processing
+in Wiced SDIO layer requires that Wiced headers begin on 32-bit boundary - at least
+on STM32F2xx).
 
 [1]: https://github.com/AriZuu/wiced-driver/issues/1
