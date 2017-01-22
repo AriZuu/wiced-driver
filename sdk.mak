@@ -1,0 +1,4 @@
+#
+# Select WICED SDK VERSION
+#
+WICED_VERSION		= 4.1.0

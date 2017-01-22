@@ -36,6 +36,7 @@ PORT ?= cortex-m
 BUILD ?= RELEASE
 
 include $(RELROOT)make/common.mak
+include sdk.mak
 
 TARGET = wiced-driver
 
@@ -44,7 +45,7 @@ WICED_MCU	?= STM32F2xx
 WICED_PLATFORM  ?= EMW3162
 WICED_BUS	?= SDIO
 
-SDK	= WICED-SDK-4.1.0
+SDK	= WICED-SDK-$(WICED_VERSION)
 
 EXTRA_CFLAGS = -Wno-cast-align -Wno-missing-field-initializers
 
@@ -61,6 +62,7 @@ SRC_TXT +=	glue/rtos.c glue/resources.c glue/low_level_init.c utils.c powersave.
 # WWD sources
 #
 SRC_TXT +=	$(SDK)/WICED/WWD/internal/wwd_management.c \
+		$(SDK)/WICED/WWD/internal/wwd_debug.c \
 		$(SDK)/WICED/WWD/internal/wwd_internal.c \
 		$(SDK)/WICED/WWD/internal/wwd_eapol.c \
 		$(SDK)/WICED/WWD/internal/wwd_sdpcm.c \
