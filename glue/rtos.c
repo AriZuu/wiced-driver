@@ -113,7 +113,7 @@ wwd_result_t host_rtos_delete_terminated_thread(host_thread_type_t* thread)
  */
 wwd_result_t host_rtos_init_semaphore(host_semaphore_type_t* semaphore)
 {
-  *semaphore = nosSemaCreate(0, 0, NULL);
+  *semaphore = nosSemaCreate(0, 0, "wwd*");
   if (*semaphore == NULL)
     return WWD_SEMAPHORE_ERROR;
 
@@ -141,7 +141,7 @@ wwd_result_t host_rtos_get_semaphore(host_semaphore_type_t* semaphore,
 wwd_result_t host_rtos_set_semaphore(host_semaphore_type_t* semaphore, wiced_bool_t fromISR)
 {
   P_ASSERT("fromISR / posInInterrupt_g mismatch.", (fromISR == 0) == (posInInterrupt_g == 0));
-  posSemaSignal(*semaphore);
+  nosSemaSignal(*semaphore);
   return WWD_SUCCESS;
 }
 
