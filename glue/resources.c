@@ -115,8 +115,17 @@ wwd_result_t host_platform_resource_read_indirect(wwd_resource_t resource,
            *size_out = 0;
         }
         else {
- 
-           *size_out = read(fd, buffer, buffer_size);
+
+           int len;
+
+           len = read(fd, buffer, buffer_size);
+           if (len == -1) {
+
+             close(fd);
+             return RESOURCE_UNSUPPORTED;
+           }
+
+           *size_out = len;
         }
 
         close(fd);
