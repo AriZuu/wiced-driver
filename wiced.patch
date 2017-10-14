@@ -1,9 +1,15 @@
 diff --git a/platforms/EMW3165/platform_config.h b/platforms/EMW3165/platform_config.h
-index 9ce21f2..fef5eb4 100644
+index 9ce21f2..30f479f 100644
 --- a/platforms/EMW3165/platform_config.h
 +++ b/platforms/EMW3165/platform_config.h
-@@ -30,7 +30,7 @@ extern "C" {
- #define WICED_WIFI_USE_GPIO_FOR_BOOTSTRAP_1
+@@ -26,11 +26,11 @@ extern "C" {
+  ******************************************************/
+ 
+ /*  GPIO pins are used to bootstrap Wi-Fi to SDIO or gSPI mode */
+-#define WICED_WIFI_USE_GPIO_FOR_BOOTSTRAP_0
+-#define WICED_WIFI_USE_GPIO_FOR_BOOTSTRAP_1
++//#define WICED_WIFI_USE_GPIO_FOR_BOOTSTRAP_0
++//#define WICED_WIFI_USE_GPIO_FOR_BOOTSTRAP_1
   
  /*  Wi-Fi GPIO0 pin is used for out-of-band interrupt */
 -#define WICED_WIFI_OOB_IRQ_GPIO_PIN  ( 0 )
