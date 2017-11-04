@@ -16,10 +16,10 @@ To compile this, you'll need:
   Just follow instructions there (patches are for SDK 3.5.2, but they work for
   newer version also).
 
-After SDK is extracted and patched, move it to WICED-SDK-4.1.0 subdirectory of this
+After SDK is extracted and patched, move it to WICED-SDK-6.0 subdirectory of this
 library. Apply patch to make it work with Pico]OS:
 
-cd WICED-SDK-4.1.0; patch -p1 < ../wiced.patch
+cd WICED-SDK-6.0; patch -p1 < ../wiced.patch
 
 The patch modifies EMW3165 configuration under platforms/EMW3165 to make it work tickless sleep.
 

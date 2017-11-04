@@ -1,3 +1,59 @@
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..1955793
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1 @@
++generated_mac_address.txt
+diff --git a/WICED/platform/MCU/wwd_platform_separate_mcu.c b/WICED/platform/MCU/wwd_platform_separate_mcu.c
+index 8984e57..4c63e5c 100644
+--- a/WICED/platform/MCU/wwd_platform_separate_mcu.c
++++ b/WICED/platform/MCU/wwd_platform_separate_mcu.c
+@@ -42,7 +42,10 @@
+ #include "wwd_platform_common.h"
+ #include "wwd_assert.h"
+ #include "platform/wwd_platform_interface.h"
++
++#ifndef PICOOS_WORKAROUNDS
+ #include "wiced_framework.h"
++#endif
+ 
+ /******************************************************
+  *                      Macros
+diff --git a/include/wiced_wifi.h b/include/wiced_wifi.h
+index 3b55c09..60421b8 100644
+--- a/include/wiced_wifi.h
++++ b/include/wiced_wifi.h
+@@ -38,6 +38,7 @@
+ 
+ #pragma once
+ 
++#ifndef PICOOS_WORKAROUNDS
+ #include "wiced_utilities.h"
+ #include "wwd_wifi.h"
+ #include "wwd_debug.h"
+@@ -130,6 +131,8 @@ typedef enum
+  *    field
+  *      wifi_flags
+  */
++#endif /* PICOOS_WORKAROUNDS */
++
+ #define WIFI_FLAG_MESH                      0x00000001  /**< MESH master enable/disable */
+ #define WIFI_FLAG_MESH_MCAST_REBROADCAST    0x00000002  /**< MESH mcast rebroadcast */
+ #define WIFI_FLAG_MESH_IP_ALLOC_MASK        0x0000001C  /**< dhcp server or client, static */
+@@ -139,6 +142,7 @@ typedef enum
+ #define WIFI_FLAG_MESH_IP_ALLOC_SHIFT       2
+ #define WIFI_FLAG_MESH_ALL_FLAGS            (WIFI_FLAG_MESH | WIFI_FLAG_MESH_MCAST_REBROADCAST | WIFI_FLAG_MESH_IP_ALLOC_MASK)
+ 
++#ifndef PICOOS_WORKAROUNDS
+ 
+ /******************************************************
+  *                 Type Definitions
+@@ -1181,3 +1185,4 @@ static inline void print_mac_address( const wiced_mac_t* mac )
+ #ifdef __cplusplus
+ } /*extern "C" */
+ #endif
++#endif /* PICOOS_WORKAROUNDS */
 diff --git a/platforms/EMW3165/platform_config.h b/platforms/EMW3165/platform_config.h
 index 9ce21f2..30f479f 100644
 --- a/platforms/EMW3165/platform_config.h
