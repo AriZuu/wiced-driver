@@ -6,7 +6,7 @@ index 0000000..1955793
 @@ -0,0 +1 @@
 +generated_mac_address.txt
 diff --git a/WICED/platform/MCU/wwd_platform_separate_mcu.c b/WICED/platform/MCU/wwd_platform_separate_mcu.c
-index 8984e57..4c63e5c 100644
+index 4dabede..d55261c 100644
 --- a/WICED/platform/MCU/wwd_platform_separate_mcu.c
 +++ b/WICED/platform/MCU/wwd_platform_separate_mcu.c
 @@ -42,7 +42,10 @@
@@ -20,8 +20,45 @@ index 8984e57..4c63e5c 100644
  
  /******************************************************
   *                      Macros
+diff --git a/include/wiced_management.h b/include/wiced_management.h
+index af35def..1c586b3 100644
+--- a/include/wiced_management.h
++++ b/include/wiced_management.h
+@@ -38,7 +38,9 @@
+ #pragma once
+ 
+ #include "network/wwd_network_interface.h"
++#ifndef PICOOS_WORKAROUNDS
+ #include "wiced_tcpip.h"
++#endif
+ #include "wiced_wifi.h"
+ 
+ #ifdef __cplusplus
+@@ -112,9 +114,11 @@ typedef void (*wiced_network_link_callback_t)(void);
+ /** IP address settings */
+ typedef struct
+ {
++#ifndef PICOOS_WORKAROUNDS
+     wiced_ip_address_t ip_address;  /**< IP address      */
+     wiced_ip_address_t gateway;     /**< Gateway address */
+     wiced_ip_address_t netmask;     /**< Netmask         */
++#endif
+ } wiced_ip_setting_t;
+ 
+ 
+@@ -132,8 +136,10 @@ typedef struct
+  */
+ typedef struct
+ {
++#ifndef PICOOS_WORKAROUNDS
+     uint32_t                count;                  /**< Number of IP addresses in the list    */
+     wiced_ip_address_t      ip_address_list[1];     /**< Variable length array of IP addresses */
++#endif
+ } wiced_ip_address_list_t;
+ 
+ /******************************************************
 diff --git a/include/wiced_wifi.h b/include/wiced_wifi.h
-index 3b55c09..60421b8 100644
+index dfe41b8..be59a19 100644
 --- a/include/wiced_wifi.h
 +++ b/include/wiced_wifi.h
 @@ -38,6 +38,7 @@
@@ -32,24 +69,24 @@ index 3b55c09..60421b8 100644
  #include "wiced_utilities.h"
  #include "wwd_wifi.h"
  #include "wwd_debug.h"
-@@ -130,6 +131,8 @@ typedef enum
+@@ -139,6 +140,8 @@ typedef enum
   *    field
   *      wifi_flags
   */
 +#endif /* PICOOS_WORKAROUNDS */
 +
- #define WIFI_FLAG_MESH                      0x00000001  /**< MESH master enable/disable */
- #define WIFI_FLAG_MESH_MCAST_REBROADCAST    0x00000002  /**< MESH mcast rebroadcast */
- #define WIFI_FLAG_MESH_IP_ALLOC_MASK        0x0000001C  /**< dhcp server or client, static */
-@@ -139,6 +142,7 @@ typedef enum
- #define WIFI_FLAG_MESH_IP_ALLOC_SHIFT       2
- #define WIFI_FLAG_MESH_ALL_FLAGS            (WIFI_FLAG_MESH | WIFI_FLAG_MESH_MCAST_REBROADCAST | WIFI_FLAG_MESH_IP_ALLOC_MASK)
+ #define WIFI_FLAG_MESH                      (1 << 0)  /**< MESH master enable/disable */
+ #define WIFI_FLAG_MESH_MCAST_REBROADCAST    (1 << 1)  /**< MESH mcast rebroadcast */
+ #define WIFI_MESH_DHCP_IP                   (1 << 4)
+@@ -146,6 +149,7 @@ typedef enum
+ 
+ #define WIFI_FLAG_MESH_ALL_FLAGS            (WIFI_FLAG_MESH | WIFI_FLAG_MESH_MCAST_REBROADCAST | WIFI_MESH_DHCP_IP | WIFI_FLAG_MESH_GATEWAY)
  
 +#ifndef PICOOS_WORKAROUNDS
  
  /******************************************************
   *                 Type Definitions
-@@ -1181,3 +1185,4 @@ static inline void print_mac_address( const wiced_mac_t* mac )
+@@ -1251,3 +1255,4 @@ static inline void print_mac_address( const wiced_mac_t* mac )
  #ifdef __cplusplus
  } /*extern "C" */
  #endif
