@@ -43,6 +43,7 @@
 
 typedef POSTASK_t host_thread_type_t;
 typedef POSSEMA_t host_semaphore_type_t;
+typedef POSMUTEX_t host_mutex_type_t;
 typedef UosRing* host_queue_type_t;
 typedef struct {
 
