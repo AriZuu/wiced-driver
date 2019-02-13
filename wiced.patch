@@ -6,39 +6,51 @@ index 0000000..1955793
 @@ -0,0 +1 @@
 +generated_mac_address.txt
 diff --git a/WICED/platform/MCU/wwd_platform_separate_mcu.c b/WICED/platform/MCU/wwd_platform_separate_mcu.c
-index 4dabede..d55261c 100644
+index 4dabede..2a88fa4 100644
 --- a/WICED/platform/MCU/wwd_platform_separate_mcu.c
 +++ b/WICED/platform/MCU/wwd_platform_separate_mcu.c
-@@ -42,7 +42,10 @@
+@@ -42,7 +42,15 @@
  #include "wwd_platform_common.h"
  #include "wwd_assert.h"
  #include "platform/wwd_platform_interface.h"
 +
 +#ifndef PICOOS_WORKAROUNDS
++/*
++ * Pico]OS: Using only the WWD driver, so this is not needed.
++ *          Having it included would force implementation of
++ *          stuff that is not really needed.
++ */
  #include "wiced_framework.h"
 +#endif
  
  /******************************************************
   *                      Macros
 diff --git a/include/wiced_management.h b/include/wiced_management.h
-index af35def..1c586b3 100644
+index af35def..03096ea 100644
 --- a/include/wiced_management.h
 +++ b/include/wiced_management.h
-@@ -38,7 +38,9 @@
+@@ -38,7 +38,13 @@
  #pragma once
  
  #include "network/wwd_network_interface.h"
 +#ifndef PICOOS_WORKAROUNDS
++/*
++ * Pico]OS: TCP/IP stack comes from separate picoos-lwip library so
++ *          leave this out.
++ */
  #include "wiced_tcpip.h"
 +#endif
  #include "wiced_wifi.h"
  
  #ifdef __cplusplus
-@@ -112,9 +114,11 @@ typedef void (*wiced_network_link_callback_t)(void);
+@@ -112,9 +118,14 @@ typedef void (*wiced_network_link_callback_t)(void);
  /** IP address settings */
  typedef struct
  {
 +#ifndef PICOOS_WORKAROUNDS
++/*
++ * Pico]OS: Leave these out because Wiced TCP/IP layer is not used.
++ */
      wiced_ip_address_t ip_address;  /**< IP address      */
      wiced_ip_address_t gateway;     /**< Gateway address */
      wiced_ip_address_t netmask;     /**< Netmask         */
@@ -46,11 +58,14 @@ index af35def..1c586b3 100644
  } wiced_ip_setting_t;
  
  
-@@ -132,8 +136,10 @@ typedef struct
+@@ -132,8 +143,13 @@ typedef struct
   */
  typedef struct
  {
 +#ifndef PICOOS_WORKAROUNDS
++/*
++ * Pico]OS: Leave these out because Wiced TCP/IP layer is not used.
++ */
      uint32_t                count;                  /**< Number of IP addresses in the list    */
      wiced_ip_address_t      ip_address_list[1];     /**< Variable length array of IP addresses */
 +#endif
@@ -58,18 +73,22 @@ index af35def..1c586b3 100644
  
  /******************************************************
 diff --git a/include/wiced_wifi.h b/include/wiced_wifi.h
-index dfe41b8..be59a19 100644
+index dfe41b8..11dbd53 100644
 --- a/include/wiced_wifi.h
 +++ b/include/wiced_wifi.h
-@@ -38,6 +38,7 @@
+@@ -38,6 +38,11 @@
  
  #pragma once
  
 +#ifndef PICOOS_WORKAROUNDS
++/*
++ * Pico]OS: Most of the stuff here is not needed as
++ *          this library is only using WWD level driver.
++ */
  #include "wiced_utilities.h"
  #include "wwd_wifi.h"
  #include "wwd_debug.h"
-@@ -139,6 +140,8 @@ typedef enum
+@@ -139,6 +144,8 @@ typedef enum
   *    field
   *      wifi_flags
   */
@@ -78,37 +97,51 @@ index dfe41b8..be59a19 100644
  #define WIFI_FLAG_MESH                      (1 << 0)  /**< MESH master enable/disable */
  #define WIFI_FLAG_MESH_MCAST_REBROADCAST    (1 << 1)  /**< MESH mcast rebroadcast */
  #define WIFI_MESH_DHCP_IP                   (1 << 4)
-@@ -146,6 +149,7 @@ typedef enum
+@@ -146,6 +153,11 @@ typedef enum
  
  #define WIFI_FLAG_MESH_ALL_FLAGS            (WIFI_FLAG_MESH | WIFI_FLAG_MESH_MCAST_REBROADCAST | WIFI_MESH_DHCP_IP | WIFI_FLAG_MESH_GATEWAY)
  
 +#ifndef PICOOS_WORKAROUNDS
++/*
++ * Pico]OS: Most of the stuff here is not needed as
++ *          this library is only using WWD level driver.
++ */
  
  /******************************************************
   *                 Type Definitions
-@@ -1251,3 +1255,4 @@ static inline void print_mac_address( const wiced_mac_t* mac )
+@@ -1251,3 +1263,4 @@ static inline void print_mac_address( const wiced_mac_t* mac )
  #ifdef __cplusplus
  } /*extern "C" */
  #endif
 +#endif /* PICOOS_WORKAROUNDS */
 diff --git a/platforms/EMW3165/platform_config.h b/platforms/EMW3165/platform_config.h
-index c001f14..2a90525 100644
+index c001f14..6f067c2 100644
 --- a/platforms/EMW3165/platform_config.h
 +++ b/platforms/EMW3165/platform_config.h
-@@ -30,7 +30,7 @@ extern "C" {
+@@ -30,7 +30,12 @@ extern "C" {
  //#define WICED_WIFI_USE_GPIO_FOR_BOOTSTRAP_1
   
  /*  Wi-Fi GPIO0 pin is used for out-of-band interrupt */
 -#define WICED_WIFI_OOB_IRQ_GPIO_PIN  ( 0 )
++/*
++ * Pico]OS: I think that this definition is originally wrong
++ *          in MXCHIP patches. At least without changing this to
++ *          1 the system won't wake up from sleep.
++ */
 +#define WICED_WIFI_OOB_IRQ_GPIO_PIN  ( 1 )
  
  /*  Wi-Fi power pin is present */
  //#define WICED_USE_WIFI_POWER_PIN
-@@ -39,7 +39,7 @@ extern "C" {
+@@ -39,7 +44,12 @@ extern "C" {
  #define WICED_USE_WIFI_RESET_PIN
  
  /* */
 -#define WICED_USE_WIFI_32K_CLOCK_MCO
++/*
++ * Pico]OS: I think that this definition is originally wrong
++ *          in MXCHIP patches. Pin from CPU to network chip clock pin is
++ *          not connected.
++ */
 +//#define WICED_USE_WIFI_32K_CLOCK_MCO
  
  /*  OTA */
