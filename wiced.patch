@@ -6,7 +6,7 @@ index 0000000..1955793
 @@ -0,0 +1 @@
 +generated_mac_address.txt
 diff --git a/WICED/platform/MCU/wwd_platform_separate_mcu.c b/WICED/platform/MCU/wwd_platform_separate_mcu.c
-index 4dabede..2a88fa4 100644
+index 4dabede..731121b 100644
 --- a/WICED/platform/MCU/wwd_platform_separate_mcu.c
 +++ b/WICED/platform/MCU/wwd_platform_separate_mcu.c
 @@ -42,7 +42,15 @@
@@ -16,7 +16,7 @@ index 4dabede..2a88fa4 100644
 +
 +#ifndef PICOOS_WORKAROUNDS
 +/*
-+ * Pico]OS: Using only the WWD driver, so this is not needed.
++ * pico]OS: Using only the WWD driver, so this is not needed.
 + *          Having it included would force implementation of
 + *          stuff that is not really needed.
 + */
@@ -26,7 +26,7 @@ index 4dabede..2a88fa4 100644
  /******************************************************
   *                      Macros
 diff --git a/include/wiced_management.h b/include/wiced_management.h
-index af35def..03096ea 100644
+index af35def..83803ee 100644
 --- a/include/wiced_management.h
 +++ b/include/wiced_management.h
 @@ -38,7 +38,13 @@
@@ -35,7 +35,7 @@ index af35def..03096ea 100644
  #include "network/wwd_network_interface.h"
 +#ifndef PICOOS_WORKAROUNDS
 +/*
-+ * Pico]OS: TCP/IP stack comes from separate picoos-lwip library so
++ * pico]OS: TCP/IP stack comes from separate picoos-lwip library so
 + *          leave this out.
 + */
  #include "wiced_tcpip.h"
@@ -49,7 +49,7 @@ index af35def..03096ea 100644
  {
 +#ifndef PICOOS_WORKAROUNDS
 +/*
-+ * Pico]OS: Leave these out because Wiced TCP/IP layer is not used.
++ * pico]OS: Leave these out because Wiced TCP/IP layer is not used.
 + */
      wiced_ip_address_t ip_address;  /**< IP address      */
      wiced_ip_address_t gateway;     /**< Gateway address */
@@ -64,7 +64,7 @@ index af35def..03096ea 100644
  {
 +#ifndef PICOOS_WORKAROUNDS
 +/*
-+ * Pico]OS: Leave these out because Wiced TCP/IP layer is not used.
++ * pico]OS: Leave these out because Wiced TCP/IP layer is not used.
 + */
      uint32_t                count;                  /**< Number of IP addresses in the list    */
      wiced_ip_address_t      ip_address_list[1];     /**< Variable length array of IP addresses */
@@ -73,7 +73,7 @@ index af35def..03096ea 100644
  
  /******************************************************
 diff --git a/include/wiced_wifi.h b/include/wiced_wifi.h
-index dfe41b8..11dbd53 100644
+index dfe41b8..3edf663 100644
 --- a/include/wiced_wifi.h
 +++ b/include/wiced_wifi.h
 @@ -38,6 +38,11 @@
@@ -82,7 +82,7 @@ index dfe41b8..11dbd53 100644
  
 +#ifndef PICOOS_WORKAROUNDS
 +/*
-+ * Pico]OS: Most of the stuff here is not needed as
++ * pico]OS: Most of the stuff here is not needed as
 + *          this library is only using WWD level driver.
 + */
  #include "wiced_utilities.h"
@@ -103,7 +103,7 @@ index dfe41b8..11dbd53 100644
  
 +#ifndef PICOOS_WORKAROUNDS
 +/*
-+ * Pico]OS: Most of the stuff here is not needed as
++ * pico]OS: Most of the stuff here is not needed as
 + *          this library is only using WWD level driver.
 + */
  
@@ -115,7 +115,7 @@ index dfe41b8..11dbd53 100644
  #endif
 +#endif /* PICOOS_WORKAROUNDS */
 diff --git a/platforms/EMW3165/platform_config.h b/platforms/EMW3165/platform_config.h
-index c001f14..6f067c2 100644
+index c001f14..7c55f2e 100644
 --- a/platforms/EMW3165/platform_config.h
 +++ b/platforms/EMW3165/platform_config.h
 @@ -30,7 +30,12 @@ extern "C" {
@@ -124,7 +124,7 @@ index c001f14..6f067c2 100644
  /*  Wi-Fi GPIO0 pin is used for out-of-band interrupt */
 -#define WICED_WIFI_OOB_IRQ_GPIO_PIN  ( 0 )
 +/*
-+ * Pico]OS: I think that this definition is originally wrong
++ * pico]OS: I think that this definition is originally wrong
 + *          in MXCHIP patches. At least without changing this to
 + *          1 the system won't wake up from sleep.
 + */
@@ -138,7 +138,7 @@ index c001f14..6f067c2 100644
  /* */
 -#define WICED_USE_WIFI_32K_CLOCK_MCO
 +/*
-+ * Pico]OS: I think that this definition is originally wrong
++ * pico]OS: I think that this definition is originally wrong
 + *          in MXCHIP patches. Pin from CPU to network chip clock pin is
 + *          not connected.
 + */
