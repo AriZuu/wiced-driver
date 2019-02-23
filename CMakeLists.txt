@@ -147,7 +147,7 @@ target_compile_definitions(wiced-driver
     WICED_DISABLE_STDIO
     WICED_DISABLE_WATCHDOG
     NETWORK_LwIP=1
-    WICED_SDK_VERSION=\"$(WICED_VERSION)\")
+    WICED_SDK_VERSION=\"${WICED_VERSION}\")
 
 if(WICED_PLATFORM STREQUAL "EMW3165")
 target_compile_definitions(wiced-driver PRIVATE GPIO_LED_NOT_SUPPORTED)
