@@ -131,10 +131,10 @@ target_include_directories(wiced-driver
     ${SDK}/WICED)
 
 #
-# Provide public headers via picoos-lwip library, because
+# Provide public headers via lwipcore library, because
 # it needs them also.
 #
-target_include_directories(picoos-lwip PUBLIC ${INC})
+target_include_directories(lwipcore PUBLIC ${INC})
 
 target_compile_definitions(wiced-driver
   PRIVATE
