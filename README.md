@@ -6,18 +6,20 @@ I have tested this using MXCHIP EMW3162 module + EMB-380-S2 development board (b
 available at least from seeedstudio.com). It works also with WifiMCU, which uses EMW3165.
 There is also a [small sensor development board][4] for EMW3165 developed by me.
 
-To compile this, you'll need:
+To compile this, some manual setup is needed. First step is to obtain 
+[WICED SDK package from Cypress][2] (free, but registration required, redistribution not allowed).
+Starting from 4.0.0 release they no longer provide SDK sources as .7z, but
+SDK can found in 43xxx_Wi-Fi directory under WICED Studio installation. There
+are also other ideas for extracting the sources in WICED forums.
 
-- [WICED SDK package from Cypress][2] (free, but registration required, redistribution not allowed).
-  Starting from 4.0.0 release they no longer provide SDK sources as .7z, but
-  SDK can found in 43xxx_Wi-Fi directory under WICED Studio installation. There
-  are also other ideas for extracting the sources in WICED forums.
-- [MXCHIP patches from github][3].
+After getting the SDK, there are two alternative ways to complete setup. Easiest way would
+be just to execute *setup_wiced_sdk.sh*. If you prefer manual setup, perform these steps:
+
+- Extract WICED SDK and move it to WICED-SDK-6.2 subdirectory of this library.
+- Get [MXCHIP patches from github][3].
   Just follow instructions there (patches are for SDK 3.5.2, but they work for
   newer version also).
-
-After SDK is extracted and patched, move it to WICED-SDK-6.2 subdirectory of this
-library. Apply patch to make it work with Pico]OS:
+- Apply pico]OS patches.
 
 cd WICED-SDK-6.2; patch -p1 < ../wiced.patch
 
@@ -25,6 +27,8 @@ The patch modifies EMW3165 configuration under platforms/EMW3165 to make it work
 
 If the patch doesn't apply cleanly, the problem might be the dos-style line endings
 in SDK files. Issue [#1][1] contains steps the fix them.
+
+You should now have valid patched SDK ready.
 
 Library doesn't use Wiced SDK Makefiles (Pico]OS Makefile system is used instead).
 Also, neither LwIP nor RTOS inside SDK is used (LwIP comes from picoos-lwip
